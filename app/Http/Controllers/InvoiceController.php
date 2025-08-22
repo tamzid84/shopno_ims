@@ -47,7 +47,25 @@ class InvoiceController extends Controller
             $products= $request->input('products');
 
             foreach ($products as $EachProduct) {
-                
+              
+                // Check if product exists
+                if(!Product::where('id',$EachProduct['product_id'])->where('user_id',$user_id)->exists()){
+                    // return response()->json([
+                    //     'status' => 'failed',
+                    //     'message' => "Product with ID {$EachProduct['product_id']} not found",
+                    // ],404);
+                    $data = ['message' => "Product with ID ".$EachProduct['product_id']." not found", 'status' => false, 'error' => null];
+                    return redirect()->back()->with($data);
+                }
+                if(Product::where('id',$EachProduct['product_id'])->where('user_id',$user_id)->value('unit') < $EachProduct['qty']){
+                    // return response()->json([
+                    //     'status' => 'failed',
+                    //     'message' => "Only ".Product::where('id',$EachProduct['product_id'])->value('unit')." Units available for Product with ID {$EachProduct['product_id']}",
+                    // ],400);
+                    $data = ['status' => 'failed', 'message' => "Only ".Product::where('id',$EachProduct['product_id'])->value('unit')." Units available for Product with ID ".$EachProduct['product_id'], 'error' => null];
+                    return redirect()->back()->with($data);
+                }   
+   
                 // Save invoice products
                 InvoiceProduct::create([
                     'invoice_id' => $invoiceID,
@@ -58,8 +76,7 @@ class InvoiceController extends Controller
                 ]);
 
                 // Decrease stock from product table
-                // Product::where('id', $EachProduct['product_id'])
-                //     ->decrement('qty', $EachProduct['qty']);
+                
                 Product::where('id',$EachProduct['product_id'])->update([
                     'unit' => Product::where('id',$EachProduct['product_id'])->value('unit') - $EachProduct['qty'],
                 ]);
@@ -118,6 +135,7 @@ class InvoiceController extends Controller
             // Delete invoice
             Invoice::where('id',$request->input('inv_id'))->delete();
 
+            
             DB::commit();
             return 1;
         }
