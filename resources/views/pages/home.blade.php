@@ -138,7 +138,7 @@
             </div>
             <div class="mb-5"></div>
             <div class="container">
-                <p class="text-center">All rights reserved © Learn with Rabbil (LWR) 2023-2024</p>
+                <p class="text-center">All rights reserved 2025-2026</p>
             </div>
         </footer>
 
