@@ -349,7 +349,7 @@
                     successToast("Invoice Created");
                 }
                 else{
-                    errorToast("Something Went Wrong")
+                    errorToast("Something Went Wrong or product not available in stock");
                 }
             }
 
